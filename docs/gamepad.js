@@ -59,13 +59,14 @@ function setVirtualGamepad() {
     },
     {
       "type": "button",
-      "text": "🞨",
+      "text": "⨉",
       "id": "b",
       "location": "right",
       "left": 40,
       "top": 80,
       "bold": false,
       "input_value": 27, // Esc
+      "fontSize": 22,
     },
     {
       "type": "dpad",
@@ -134,7 +135,7 @@ function setVirtualGamepad() {
     }
     info[i].fontSize = info[i].fontSize || 28;
     style += 'font-size:' + info[i].fontSize + 'px;';
-    style += 'font-family: serif !important;';
+    style += 'font-family: sans-serif, serif !important;';
     if (info[i].block) {
       style += blockCSS;
     }

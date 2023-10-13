@@ -185,6 +185,32 @@
           }
         }
 
+        const toggleFullscreen = (fullscreen) => {
+          if (document.fullscreenElement == null) {
+            if (document.body.requestFullscreen) {
+              document.body.requestFullscreen();
+            } else if (document.body.mozRequestFullScreen) {
+              document.body.mozRequestFullScreen();
+            } else if (document.body.webkitRequestFullscreen) {
+              document.body.webkitRequestFullscreen();
+            } else if (document.body.msRequestFullscreen) {
+              document.body.msRequestFullscreen();
+            }
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          }
+        }
+
+        document.querySelector('canvas').onclick = toggleFullscreen;
+
     </script>
 
   </body>
