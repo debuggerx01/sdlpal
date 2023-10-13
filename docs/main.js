@@ -272,7 +272,7 @@ function launch() {
     document.getElementById('controls').style = "position: absolute; right: 0.5em; top: 0.5em; opacity: 0.3;";
     runGame();
     makeGameScreenFit();
-    document.querySelector('canvas').onclick = toggleFullscreen;
+    document.querySelector('canvas').ontouchend = toggleFullscreen;
 }
 
 Module.setStatus(strInit);
