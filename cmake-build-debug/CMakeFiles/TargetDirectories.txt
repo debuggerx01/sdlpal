@@ -1,0 +1,3 @@
+/home/debuggerx/CLionProjects/sdlpal/cmake-build-debug/CMakeFiles/sdlpal.dir
+/home/debuggerx/CLionProjects/sdlpal/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/debuggerx/CLionProjects/sdlpal/cmake-build-debug/CMakeFiles/rebuild_cache.dir

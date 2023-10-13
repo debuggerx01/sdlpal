@@ -1,0 +1,38 @@
+/home/debuggerx/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/debuggerx/.local/share/JetBrains/Toolbox/apps/clion/bin/ninja/linux/x64/ninja -G Ninja -S /home/debuggerx/CLionProjects/sdlpal -B /home/debuggerx/CLionProjects/sdlpal/cmake-build-debug
+-- Configuring done (0.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/debuggerx/CLionProjects/sdlpal/cmake-build-debug
+
+无法获取编译器信息:
+	编译器退出，错误代码 1: /usr/bin/cc -xobjective-c -g -fpch-preprocess -v -dD -E
+	Using built-in specs.
+	COLLECT_GCC=/usr/bin/cc
+	OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
+	OFFLOAD_TARGET_DEFAULT=1
+	Target: x86_64-linux-gnu
+	Configured with: ../src/configure -v --with-pkgversion='Deepin 11.2.0-deepin2+rb2' --with-bugurl=file:///usr/share/doc/gcc-11/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,m2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-11 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/usr/src/packages/BUILD/debian/tmp-nvptx/usr,amdgcn-amdhsa=/usr/src/packages/BUILD/debian/tmp-gcn/usr --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --with-build-config=bootstrap-lto-lean --enable-link-serialization=16
+	Thread model: posix
+	Supported LTO compression algorithms: zlib zstd
+	gcc version 11.2.0 (Deepin 11.2.0-deepin2+rb2) 
+	COLLECT_GCC_OPTIONS='-g' '-fpch-preprocess' '-v' '-dD' '-E' '-D' '___CIDR_DEFINITIONS_END' '-mtune=generic' '-march=x86-64'
+	 cc1obj -E -quiet -v -imultiarch x86_64-linux-gnu -D ___CIDR_DEFINITIONS_END /tmp/compiler-file13834804873889248225 -mtune=generic -march=x86-64 -fpch-preprocess -g -fworking-directory -fasynchronous-unwind-tables -dD -dumpbase compiler-file13834804873889248225
+	cc: fatal error: cannot execute 'cc1obj': execvp: No such file or directory
+	compilation terminated.
+	
+	
+	编译器退出，错误代码 1: /usr/bin/c++ -xobjective-c++ -g -std=gnu++14 -fpch-preprocess -v -dD -E
+	Using built-in specs.
+	COLLECT_GCC=/usr/bin/c++
+	OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
+	OFFLOAD_TARGET_DEFAULT=1
+	Target: x86_64-linux-gnu
+	Configured with: ../src/configure -v --with-pkgversion='Deepin 11.2.0-deepin2+rb2' --with-bugurl=file:///usr/share/doc/gcc-11/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,m2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-11 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/usr/src/packages/BUILD/debian/tmp-nvptx/usr,amdgcn-amdhsa=/usr/src/packages/BUILD/debian/tmp-gcn/usr --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --with-build-config=bootstrap-lto-lean --enable-link-serialization=16
+	Thread model: posix
+	Supported LTO compression algorithms: zlib zstd
+	gcc version 11.2.0 (Deepin 11.2.0-deepin2+rb2) 
+	COLLECT_GCC_OPTIONS='-g' '-std=gnu++14' '-fpch-preprocess' '-v' '-dD' '-E' '-D' '___CIDR_DEFINITIONS_END' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+	 cc1objplus -E -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D ___CIDR_DEFINITIONS_END /tmp/compiler-file13834804873889248225 -mtune=generic -march=x86-64 -std=gnu++14 -fpch-preprocess -g -fworking-directory -fasynchronous-unwind-tables -dD -dumpbase compiler-file13834804873889248225
+	c++: fatal error: cannot execute 'cc1objplus': execvp: No such file or directory
+	compilation terminated.
+	
+	
