@@ -36,11 +36,11 @@
 # define PAL_DEFAULT_TEXTURE_WIDTH   640
 # define PAL_DEFAULT_TEXTURE_HEIGHT  400
 
-# if SDL_VERSION_ATLEAST(2,0,0)
+//# if SDL_VERSION_ATLEAST(2,0,0)
 #  define PAL_VIDEO_INIT_FLAGS  (SDL_WINDOW_SHOWN)
-# else
-#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
-# endif
+//# else
+//#  define PAL_VIDEO_INIT_FLAGS  (SDL_HWSURFACE | SDL_FULLSCREEN)
+//# endif
 
 #define PAL_SDL_INIT_FLAGS	(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_CDROM | SDL_INIT_NOPARACHUTE | SDL_INIT_JOYSTICK)
 
@@ -49,9 +49,11 @@
 # define PAL_PORTYEAR         "2016"
 
 # include <ctype.h>
+# include <string.h>
 # include <sys/time.h>
 
-#define strcasestr(a,b) strstr(toupper((a)),toupper((b)))
+
+#define strcasestr(a,b) strstr(fix_toUpperCase((a)),fix_toUpperCase((b)))
 
 #define PAL_HAS_GLSL 1
 #define PAL_HAS_OPUS 0

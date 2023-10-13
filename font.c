@@ -635,3 +635,20 @@ PAL_FontHeight(
 {
 	return _font_height;
 }
+
+char *fix_toUpperCase(char *lower) {
+  int len = strlen(lower);
+
+  // Allocate space for new string
+  char *upper = (char *) malloc(sizeof(char) * (len + 1));
+
+  // Add null terminator to string
+  upper[len] = '\0';
+
+  // Convert characters to uppercase one by one
+  for (int i = 0; i < len; i++) {
+    upper[i] = toupper(lower[i]);
+  }
+
+  return upper;
+}

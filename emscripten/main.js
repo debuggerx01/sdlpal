@@ -1,7 +1,7 @@
 var strSyncingFs = 'Syncing FS...';
 var strDone = 'Done.';
 var strDeleting = 'Deleting...';
-var strNoSave = 'Cannot find saved games to download';
+var strNoSave = 'Cannot find saved games';
 var strNoData = 'Error: Game data not loaded!';
 var strInit = 'Initializing...';
 var strLoading = 'Loading';
@@ -12,7 +12,7 @@ if (userLang === 'zh-CN' || userLang.startsWith('zh-Hans') ) {
     strSyncingFs = '正在同步文件系统...';
     strDone = '完成。';
     strDeleting = '正在删除...';
-    strNoSave = '无法找到可下载的游戏存档！';
+    strNoSave = '无法找到游戏存档！';
     strNoData = '错误：游戏数据未上传。请先上传ZIP格式的游戏数据文件。';
     strInit = '正在初始化...';
     strLoading = '正在加载';
@@ -21,7 +21,7 @@ if (userLang === 'zh-CN' || userLang.startsWith('zh-Hans') ) {
     strSyncingFs = '正在同步檔案系統...';
     strDone = '完成。';
     strDeleting = '正在刪除...';
-    strNoSave = '無法找到可下載的遊戲記錄！';
+    strNoSave = '無法找到遊戲記錄！';
     strNoData = '錯誤：遊戲資料檔未上傳。請先上傳ZIP格式的遊戲資料檔。';
     strInit = '正在初始化...';
     strLoading = '正在加載';
@@ -116,8 +116,8 @@ function loadZip() {
 		for (var i = 0; i < pathArr.length; i++) {
 		    currPath += '/';
 		    currPath += pathArr[i];
-		    try { 
-			FS.mkdir(currPath.toLowerCase(), 0777);
+		    try {
+			FS.mkdir(currPath.toLowerCase(), 0o777);
 		    } catch (e) {
 		    }
 		}
@@ -140,7 +140,7 @@ function clearData() {
         var doDelete = function(path) {
             Object.keys(FS.lookupPath(path).node.contents).forEach(element => {
                 var stat = FS.stat(path + '/' + element);
-                if (stat.mode & 0040000) {
+                if (stat.mode & 0o040000) {
                     doDelete(path + '/' + element);
                     FS.rmdir(path + '/' + element);
                 } else {
@@ -159,25 +159,91 @@ function clearData() {
     }
 }
 
-function downloadSaves() {
-    var zip = new JSZip();
-    var hasData = false;
-    Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
-        if (element.endsWith('.rpg')) {
+function uploadSaves() {
+    let savedKey = '';
+    if (window.localStorage) {
+        savedKey = window.localStorage.getItem('sdlpal-cloud-save-key') || '';
+    }
+
+    let saveKey = window.prompt('[上传] 请输入存档密钥', savedKey) || '';
+
+    if (saveKey.length) {
+        const cloudSaveKey = `${saveKey.replaceAll('_', '-').slice(0, 100)}_sdl_pal`;
+
+        var zip = new JSZip();
+        var hasData = false;
+        Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
+          if (element.endsWith('.rpg')) {
             var array = FS.readFile('/data/' + element);
             zip.file(element, array);
             hasData = true;
+          }
+        });
+        if (!hasData) {
+          window.alert(strNoSave);
+          return;
         }
-    });
-    if (!hasData) {
-        window.alert(strNoSave);
-        return;
+        zip.generateAsync({type:"base64"}).then(async (base64) => {
+          const response = await (await fetch(`//emulator-js-saves.debuggerx.com/${cloudSaveKey}`, {
+              method: 'POST',
+              body: base64
+          })).text();
+          if (response === 'ok') {
+            alert('存档上传成功');
+            if (window.localStorage) {
+              window.localStorage.setItem('sdlpal-cloud-save-key', saveKey);
+            }
+          }
+        }, function (err) {
+          Module.printErr(err);
+        });
     }
-    zip.generateAsync({type:"base64"}).then(function (base64) {
-        window.location = "data:application/zip;base64," + base64;
-    }, function (err) {
-        Module.printErr(err);
-    });
+}
+
+
+const downloadSaves = async () => {
+  let savedKey = '';
+  if (window.localStorage) {
+    savedKey = window.localStorage.getItem('sdlpal-cloud-save-key') || '';
+  }
+  let saveKey = window.prompt('[下载] 请输入存档密钥', savedKey) || '';
+  let sav;
+  if (saveKey.length) {
+    saveKey = `${saveKey.replaceAll('_', '-').slice(0, 100)}_sdl_pal`;
+    let response = await (await fetch(`//emulator-js-saves.debuggerx.com/${saveKey}`)).text();
+    if (response.length > 128) {
+      const bstr = atob(response);
+      let n = bstr.length;
+      sav = new Uint8Array(n);
+      let valid = false;
+      while (n--) {
+        if (bstr.charCodeAt(n) !== 0) {
+          valid = true;
+        }
+        sav[n] = bstr.charCodeAt(n);
+      }
+      if (!valid) {
+        alert(response.length ? response : '云端存档已损坏');
+        sav = null;
+      }
+    }
+
+    if (sav) {
+      var zip = new JSZip();
+      zip.loadAsync(sav).then((z) => {
+        z.forEach((relativePath, zipEntry) => {
+          zip.sync(() => {
+            zipEntry.async('uint8array').then((arr) => {
+              FS.writeFile('/data/' + relativePath.toLowerCase(), arr, {encoding: 'binary'});
+            })
+          });
+        });
+        FS.syncfs(() => {
+          alert('存档下载完成');
+        });
+      });
+    }
+  }
 }
 
 async function runGame() {
@@ -197,10 +263,15 @@ function launch() {
 	Module.setStatus(strNoData);
 	return;
     }
+    document.getElementById('statusBar').style = "display:none";
     document.getElementById('btnLaunch').style = "display:none";
     document.getElementById('btnLoadZip').style = "display:none";
     document.getElementById('btnDeleteData').style = "display:none";
+    document.getElementById('btnSelectZip').style = "display:none";
+    document.getElementById('btnDownloadSave').style = "display:none";
+    document.getElementById('controls').style = "position: absolute; right: 0.5em; top: 0.5em; opacity: 0.3;";
     runGame();
+    makeGameScreenFit();
 }
 
 Module.setStatus(strInit);
@@ -211,3 +282,15 @@ window.onerror = function(event) {
         if (text) Module.printErr('[post-exception status] ' + text);
     };
 };
+
+function makeGameScreenFit() {
+    var width = window.screen.width;
+    var height = window.screen.height;
+    if (width / height > (640 / 400)) {
+        document.querySelector('canvas').style = 'height: 90vh; width: unset;';
+    } else {
+        document.querySelector('canvas').style = 'width: 100vw; height: unset;';
+    }
+}
+
+window.onresize = makeGameScreenFit;

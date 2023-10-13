@@ -121,6 +121,8 @@ PAL_FontHeight(
 	void
 );
 
+char *fix_toUpperCase(char *lower);
+
 PAL_C_LINKAGE_END
 
 #endif
