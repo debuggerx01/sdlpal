@@ -270,6 +270,7 @@ function launch() {
     document.getElementById('btnSelectZip').style = "display:none";
     document.getElementById('btnDownloadSave').style = "display:none";
     document.getElementById('controls').style = "position: absolute; right: 0.5em; top: 0.5em; opacity: 0.3;";
+    document.getElementById('btnFullscreen').style.display = "inline-block";
     runGame();
     makeGameScreenFit();
     document.querySelector('canvas').ontouchend = toggleFullscreen;
@@ -287,7 +288,7 @@ window.onerror = function(event) {
 function makeGameScreenFit() {
     var width = window.screen.width;
     var height = window.screen.height;
-    if (width / height > (640 / 400)) {
+    if (width / height >= (640 / 400)) {
         document.querySelector('canvas').style = 'height: 90vh; width: unset;';
     } else {
         document.querySelector('canvas').style = 'width: 100vw; height: unset;';

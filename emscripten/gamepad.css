@@ -145,6 +145,11 @@
   border-top-color:#fff
 }
 
+.ps_button {
+  background: transparent;
+  pointer-events: none;
+}
+
 @media (max-width: 574px), (max-height: 574px) {
   .ejs_virtualGamepad_parent {
     width: 100%;

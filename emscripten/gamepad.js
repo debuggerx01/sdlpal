@@ -24,49 +24,63 @@ function setVirtualGamepad() {
       code: keyCode,
     }));
   }
+    const addIcon = (data, size) => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.justifyContent = 'center'
+      div.style.alignItems = 'center';
+      div.style.height = '100%';
+      div.style.pointerEvents = 'none';
+      div.innerHTML= data;
+      const svg = div.querySelector('svg');
+      svg.style.width = `${size}px`;
+      svg.style.height = `${size}px`;
+      svg.style.background = 'transparent';
+      return div;
+  }
 
   let info = [
     {
       "type": "button",
-      "text": "△",
+      "icon": '<svg class="ps_button" width="18" height="18" viewBox="-1.5 0 18 18"><path fill="#78787888" d="M15.998,14.727L7.504,0.204l-8.486,14.521L15.998,14.727z M7.48,4.057l4.889,8.569H2.637L7.48,4.057z"/></svg>',
       "id": "🞨",
       "location": "right",
       "left": 40,
       "bold": true,
       "input_value": 83, // S
-      // "fontSize": 46,
+      "size": 36,
     },
     {
       "type": "button",
-      "text": "□",
+      "icon": '<svg class="ps_button" width="15" height="15" viewBox="0 0 15 15"><rect x="1" y="1" style="fill-opacity: 0; stroke: rgba(120, 120, 120, 0.5); stroke-width: 2;" width="12" height="12"/></svg>',
       "id": "y",
       "location": "right",
       "top": 40,
       "bold": true,
       "input_value": 82, // R
-      // "fontSize": 42
+      "size": 33,
     },
     {
       "type": "button",
-      "text": "○",
+      "icon": '<svg class="ps_button" width="15" height="15" viewBox="0 0 15 15"><circle xmlns="http://www.w3.org/2000/svg" style="fill: none; stroke: rgba(120, 120, 120, 0.5); stroke-width: 2;" cx="7.5" cy="7.5" r="6.25"/></svg>',
       "id": "a",
       "location": "right",
       "left": 81,
       "top": 40,
       "bold": true,
       "input_value": 32, // Space
-      // "fontSize": 46
+      "size": 36,
     },
     {
       "type": "button",
-      "text": "⨉",
+      "icon": '<svg class="ps_button" width="15" height="15" viewBox="0 0 15 15"><g><line style="fill: none; stroke: rgba(120, 120, 120, 0.5); stroke-width: 2;" x1="1" y1="1" x2="14" y2="14"/><line style="fill: none; stroke: rgba(120, 120, 120, 0.5); stroke-width: 2;" x1="14" y1="1" x2="1" y2="14"/></g></svg>',
       "id": "b",
       "location": "right",
       "left": 40,
       "top": 80,
       "bold": false,
       "input_value": 27, // Esc
-      "fontSize": 22,
+      "size": 32,
     },
     {
       "type": "dpad",
@@ -128,21 +142,13 @@ function setVirtualGamepad() {
     if (info[i].top) {
       style += 'top:' + info[i].top + (typeof info[i].top === 'number' ? 'px' : '') + ';';
     }
-    if (!info[i].bold) {
-      style += 'font-weight:normal;';
-    } else if (info[i].bold) {
-      style += 'font-weight:bold;';
-    }
-    info[i].fontSize = info[i].fontSize || 28;
-    style += 'font-size:' + info[i].fontSize + 'px;';
-    style += 'font-family: sans-serif, serif !important;';
     if (info[i].block) {
       style += blockCSS;
     }
     if (['top', 'center', 'left', 'right'].includes(info[i].location)) {
       const button = document.createElement("div");
       button.style = style;
-      button.innerText = info[i].text;
+      button.appendChild(addIcon(info[i].icon, info[i].size));
       button.classList.add("ejs_virtualGamepad_button");
       elems[info[i].location].appendChild(button);
       const value = info[i].input_new_cores || info[i].input_value;
