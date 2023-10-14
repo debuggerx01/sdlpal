@@ -273,7 +273,6 @@ function launch() {
     document.getElementById('btnFullscreen').style.display = "inline-block";
     runGame();
     makeGameScreenFit();
-    document.querySelector('canvas').ontouchend = toggleFullscreen;
 }
 
 Module.setStatus(strInit);
