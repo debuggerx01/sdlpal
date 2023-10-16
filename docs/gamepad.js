@@ -172,6 +172,7 @@ function setVirtualGamepad() {
       elems[info[i].location].appendChild(button);
       const value = info[i].input_new_cores || info[i].input_value;
       if (info[i].id === 'vibration') {
+        button.id = 'btnVibration';
         if ('vibrate' in window.navigator) {
           button.addEventListener("touchend", (e) => {
             e.preventDefault();
