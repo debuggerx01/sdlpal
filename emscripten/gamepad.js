@@ -90,6 +90,17 @@ function setVirtualGamepad() {
       "joystickInput": false,
       "inputValues": [38, 40, 37, 39]
     },
+    {
+      "type":"button",
+      "text":"震动关",
+      "id":"vibration",
+      "location":"center",
+      "left":32,
+      "top":50,
+      "fontSize":15,
+      "block":true,
+      "input_value":-1
+    },
   ];
 
   info = JSON.parse(JSON.stringify(info));
@@ -152,6 +163,18 @@ function setVirtualGamepad() {
       button.classList.add("ejs_virtualGamepad_button");
       elems[info[i].location].appendChild(button);
       const value = info[i].input_new_cores || info[i].input_value;
+      if (info[i].id === 'vibration') {
+        if ('vibrate' in window.navigator) {
+          this.addEventListener(button, "touchend", (e) => {
+            e.preventDefault();
+            window.__enableGamePadVibration = !window.__enableGamePadVibration;
+            button.innerText = `震动${window.__enableGamePadVibration ? '开' : '关'}`;
+          });
+        } else {
+          button.style.display = 'none';
+        }
+        continue;
+      }
       addEventListener(button, "touchstart touchend touchcancel", (e) => {
         e.preventDefault();
         if (e.type === 'touchend' || e.type === 'touchcancel') {
@@ -160,6 +183,9 @@ function setVirtualGamepad() {
             simulateInput(value, 0);
           })
         } else {
+          if (window.__enableGamePadVibration) {
+            window.navigator.vibrate([10]);
+          }
           e.target.classList.add("ejs_virtualGamepad_button_down");
           simulateInput(value, 1);
         }
@@ -187,6 +213,9 @@ function setVirtualGamepad() {
     dpadMain.appendChild(horizontal);
 
     const updateCb = (e) => {
+      if (e.type === 'touchstart' && window.__enableGamePadVibration) {
+        window.navigator.vibrate([10]);
+      }
       e.preventDefault();
       const touch = e.targetTouches[0];
       if (!touch) return;

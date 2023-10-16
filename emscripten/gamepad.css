@@ -148,6 +148,7 @@
 .ps_button {
   background: transparent;
   pointer-events: none;
+  transform: translateX(1%);
 }
 
 @media (max-width: 574px), (max-height: 574px) {

@@ -270,7 +270,7 @@ function launch() {
     document.getElementById('btnSelectZip').style = "display:none";
     document.getElementById('btnDownloadSave').style = "display:none";
     document.getElementById('controls').style = "position: absolute; right: 0.5em; top: 0.5em; opacity: 0.3;";
-    document.getElementById('btnFullscreen').style.display = "inline-block";
+    document.getElementById('btnEnterFullscreen').style.display = "inline-block";
     runGame();
     makeGameScreenFit();
 }
@@ -290,7 +290,7 @@ function makeGameScreenFit() {
     if (width / height >= (640 / 400)) {
         document.querySelector('canvas').style = 'height: 90vh; width: unset;';
     } else {
-        document.querySelector('canvas').style = 'width: 100vw; height: unset;';
+        document.querySelector('canvas').style = 'width: calc(100vw - 2px); height: unset;';
     }
 }
 
