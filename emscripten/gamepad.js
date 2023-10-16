@@ -156,16 +156,24 @@ function setVirtualGamepad() {
     if (info[i].block) {
       style += blockCSS;
     }
+    if (info[i].fontSize) {
+      style += 'font-size:'+info[i].fontSize+'px;';
+    }
     if (['top', 'center', 'left', 'right'].includes(info[i].location)) {
       const button = document.createElement("div");
       button.style = style;
-      button.appendChild(addIcon(info[i].icon, info[i].size));
+      if (info[i].icon) {
+        button.appendChild(addIcon(info[i].icon, info[i].size));
+      } else {
+        button.innerText = info[i].text;
+
+      }
       button.classList.add("ejs_virtualGamepad_button");
       elems[info[i].location].appendChild(button);
       const value = info[i].input_new_cores || info[i].input_value;
       if (info[i].id === 'vibration') {
         if ('vibrate' in window.navigator) {
-          this.addEventListener(button, "touchend", (e) => {
+          button.addEventListener("touchend", (e) => {
             e.preventDefault();
             window.__enableGamePadVibration = !window.__enableGamePadVibration;
             button.innerText = `震动${window.__enableGamePadVibration ? '开' : '关'}`;
