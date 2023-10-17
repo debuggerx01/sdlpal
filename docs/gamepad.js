@@ -17,26 +17,37 @@ function setVirtualGamepad() {
     return rv;
   }
 
-  const simulateInput = (keyCode, isPress) => {
+  const _simulateInput = (keyCode, isPress) => {
     document.dispatchEvent(new KeyboardEvent(isPress ? 'keydown': 'keyup', {
       keyCode,
       bubbles: true,
       code: keyCode,
     }));
   }
-    const addIcon = (data, size) => {
-      const div = document.createElement('div');
-      div.style.display = 'flex';
-      div.style.justifyContent = 'center'
-      div.style.alignItems = 'center';
-      div.style.height = '100%';
-      div.style.pointerEvents = 'none';
-      div.innerHTML= data;
-      const svg = div.querySelector('svg');
-      svg.style.width = `${size}px`;
-      svg.style.height = `${size}px`;
-      svg.style.background = 'transparent';
-      return div;
+
+  const simulateInput = (keyCode, isPress) => {
+    if (isPress) {
+      _simulateInput(keyCode, isPress);
+    } else {
+      setTimeout(() => {
+        _simulateInput(keyCode, isPress);
+      }, 50);
+    }
+  }
+
+  const addIcon = (data, size) => {
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    div.style.justifyContent = 'center'
+    div.style.alignItems = 'center';
+    div.style.height = '100%';
+    div.style.pointerEvents = 'none';
+    div.innerHTML= data;
+    const svg = div.querySelector('svg');
+    svg.style.width = `${size}px`;
+    svg.style.height = `${size}px`;
+    svg.style.background = 'transparent';
+    return div;
   }
 
   let info = [
