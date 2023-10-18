@@ -6,6 +6,18 @@ function setVirtualGamepad() {
   window.__virtualGamepad.classList.add("ejs_virtualGamepad_parent");
   document.body.appendChild(window.__virtualGamepad);
 
+  window.__gamePadVibration = 0;
+
+  const gamePadVibrationStatus = ['关', '弱', '强'];
+
+  window.__use4DirectionDPad = true;
+
+  const vibrate = () => {
+    if (window.__gamePadVibration !== 0) {
+      window.navigator.vibrate([0, 10, 50][__gamePadVibration]);
+    }
+  }
+
   const addEventListener = (element, listener, callback) => {
     const listeners = listener.split(" ");
     let rv = [];
@@ -187,8 +199,11 @@ function setVirtualGamepad() {
         if ('vibrate' in window.navigator) {
           button.addEventListener("touchend", (e) => {
             e.preventDefault();
-            window.__enableGamePadVibration = !window.__enableGamePadVibration;
-            button.innerText = `震动${window.__enableGamePadVibration ? '开' : '关'}`;
+            window.__gamePadVibration = (window.__gamePadVibration + 1);
+            if (window.__gamePadVibration === 3) {
+              window.__gamePadVibration = 0;
+            }
+            button.innerText = `震动${gamePadVibrationStatus[window.__gamePadVibration]}`;
           });
         } else {
           button.style.display = 'none';
@@ -203,9 +218,7 @@ function setVirtualGamepad() {
             simulateInput(value, 0);
           })
         } else {
-          if (window.__enableGamePadVibration) {
-            window.navigator.vibrate([10]);
-          }
+          vibrate();
           e.target.classList.add("ejs_virtualGamepad_button_down");
           simulateInput(value, 1);
         }
@@ -233,8 +246,8 @@ function setVirtualGamepad() {
     dpadMain.appendChild(horizontal);
 
     const updateCb = (e) => {
-      if (e.type === 'touchstart' && window.__enableGamePadVibration) {
-        window.navigator.vibrate([10]);
+      if (e.type === 'touchstart') {
+        vibrate();
       }
       e.preventDefault();
       const touch = e.targetTouches[0];
@@ -248,31 +261,52 @@ function setVirtualGamepad() {
         right = 0,
         angle = Math.atan(x / y) / (Math.PI / 180);
 
-      if (y <= -10) {
-        up = 1;
-      }
-      if (y >= 10) {
-        down = 1;
-      }
+      console.info(x, y, angle);
 
-      if (x >= 10) {
-        right = 1;
-        left = 0;
-        if (angle < 0 && angle >= -35 || angle > 0 && angle <= 35) {
-          right = 0;
+      if (window.__use4DirectionDPad) {
+        if (Math.abs(x) < 10 || Math.abs(y) < 10) {
+          return;
         }
-        up = (angle < 0 && angle >= -55 ? 1 : 0);
-        down = (angle > 0 && angle <= 55 ? 1 : 0);
-      }
+        if (Math.abs(x) > Math.abs(y)) {
+          if (x > 0) {
+            right = 1;
+          } else {
+            left = 1;
+          }
+        } else {
+          if (y > 0) {
+            down = 1;
+          } else {
+            up = 1;
+          }
+        }
+      } else {
+        if (y <= -10) {
+          up = 1;
+        }
+        if (y >= 10) {
+          down = 1;
+        }
 
-      if (x <= -10) {
-        right = 0;
-        left = 1;
-        if (angle < 0 && angle >= -35 || angle > 0 && angle <= 35) {
+        if (x >= 10) {
+          right = 1;
           left = 0;
+          if (angle < 0 && angle >= -35 || angle > 0 && angle <= 35) {
+            right = 0;
+          }
+          up = (angle < 0 && angle >= -55 ? 1 : 0);
+          down = (angle > 0 && angle <= 55 ? 1 : 0);
         }
-        up = (angle > 0 && angle <= 55 ? 1 : 0);
-        down = (angle < 0 && angle >= -55 ? 1 : 0);
+
+        if (x <= -10) {
+          right = 0;
+          left = 1;
+          if (angle < 0 && angle >= -35 || angle > 0 && angle <= 35) {
+            left = 0;
+          }
+          up = (angle > 0 && angle <= 55 ? 1 : 0);
+          down = (angle < 0 && angle >= -55 ? 1 : 0);
+        }
       }
 
       dpadMain.classList.toggle("ejs_dpad_up_pressed", up);
@@ -336,124 +370,6 @@ function setVirtualGamepad() {
         simulateInput(dpad.inputValues[1], down);
         simulateInput(dpad.inputValues[2], left);
         simulateInput(dpad.inputValues[3], right);
-      }
-    });
-  })
-
-
-  info.forEach((zone, index) => {
-    if (zone.type !== 'zone') return;
-    if (leftHandedMode && ['left', 'right'].includes(zone.location)) {
-      zone.location = (zone.location === 'left') ? 'right' : 'left';
-      const amnt = JSON.parse(JSON.stringify(zone));
-      if (amnt.left) {
-        zone.right = amnt.left;
-      }
-      if (amnt.right) {
-        zone.left = amnt.right;
-      }
-    }
-    const elem = document.createElement("div");
-    addEventListener(elem, "touchstart touchmove touchend touchcancel", (e) => {
-      e.preventDefault();
-    });
-    elems[zone.location].appendChild(elem);
-    const zoneObj = nipplejs.create({
-      'zone': elem,
-      'mode': 'static',
-      'position': {
-        'left': zone.left,
-        'top': zone.top
-      },
-      'color': zone.color || 'red'
-    });
-    zoneObj.on('end', () => {
-      simulateInput(zone.inputValues[0], 0);
-      simulateInput(zone.inputValues[1], 0);
-      simulateInput(zone.inputValues[2], 0);
-      simulateInput(zone.inputValues[3], 0);
-    });
-    zoneObj.on('move', (e, info) => {
-      const degree = info.angle.degree;
-      const distance = info.distance;
-      if (zone.joystickInput === true) {
-        let x = 0, y = 0;
-        if (degree > 0 && degree <= 45) {
-          x = distance / 50;
-          y = -0.022222222222222223 * degree * distance / 50;
-        }
-        if (degree > 45 && degree <= 90) {
-          x = 0.022222222222222223 * (90 - degree) * distance / 50;
-          y = -distance / 50;
-        }
-        if (degree > 90 && degree <= 135) {
-          x = 0.022222222222222223 * (90 - degree) * distance / 50;
-          y = -distance / 50;
-        }
-        if (degree > 135 && degree <= 180) {
-          x = -distance / 50;
-          y = -0.022222222222222223 * (180 - degree) * distance / 50;
-        }
-        if (degree > 135 && degree <= 225) {
-          x = -distance / 50;
-          y = -0.022222222222222223 * (180 - degree) * distance / 50;
-        }
-        if (degree > 225 && degree <= 270) {
-          x = -0.022222222222222223 * (270 - degree) * distance / 50;
-          y = distance / 50;
-        }
-        if (degree > 270 && degree <= 315) {
-          x = -0.022222222222222223 * (270 - degree) * distance / 50;
-          y = distance / 50;
-        }
-        if (degree > 315 && degree <= 359.9) {
-          x = distance / 50;
-          y = 0.022222222222222223 * (360 - degree) * distance / 50;
-        }
-        if (x > 0) {
-          simulateInput(zone.inputValues[0], 0x7fff * x);
-          simulateInput(zone.inputValues[1], 0);
-        } else {
-          simulateInput(zone.inputValues[1], 0x7fff * -x);
-          simulateInput(zone.inputValues[0], 0);
-        }
-        if (y > 0) {
-          simulateInput(zone.inputValues[2], 0x7fff * y);
-          simulateInput(zone.inputValues[3], 0);
-        } else {
-          simulateInput(zone.inputValues[3], 0x7fff * -y);
-          simulateInput(zone.inputValues[2], 0);
-        }
-
-      } else {
-        if (degree >= 30 && degree < 150) {
-          simulateInput(zone.inputValues[0], 1);
-        } else {
-          window.setTimeout(() => {
-            simulateInput(zone.inputValues[0], 0);
-          }, 30);
-        }
-        if (degree >= 210 && degree < 330) {
-          simulateInput(zone.inputValues[1], 1);
-        } else {
-          window.setTimeout(() => {
-            simulateInput(zone.inputValues[1], 0);
-          }, 30);
-        }
-        if (degree >= 120 && degree < 240) {
-          simulateInput(zone.inputValues[2], 1);
-        } else {
-          window.setTimeout(() => {
-            simulateInput(zone.inputValues[2], 0);
-          }, 30);
-        }
-        if (degree >= 300 || degree >= 0 && degree < 60) {
-          simulateInput(zone.inputValues[3], 1);
-        } else {
-          window.setTimeout(() => {
-            simulateInput(zone.inputValues[3], 0);
-          }, 30);
-        }
       }
     });
   })
