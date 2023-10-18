@@ -264,7 +264,7 @@ function setVirtualGamepad() {
       console.info(x, y, angle);
 
       if (window.__use4DirectionDPad) {
-        if (Math.abs(x) < 10 || Math.abs(y) < 10) {
+        if (Math.abs(x) < 10 && Math.abs(y) < 10) {
           return;
         }
         if (Math.abs(x) > Math.abs(y)) {
