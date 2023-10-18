@@ -261,8 +261,6 @@ function setVirtualGamepad() {
         right = 0,
         angle = Math.atan(x / y) / (Math.PI / 180);
 
-      console.info(x, y, angle);
-
       if (window.__use4DirectionDPad) {
         if (Math.abs(x) < 10 && Math.abs(y) < 10) {
           return;
